@@ -1,0 +1,1 @@
+dbe95d745adf226f9accd64efd6b1712eb8eddae933ab024f3e832fa6767284b  SimpleCubeLauncher-0.2.8-win64.zip

@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+build/
+dist/
+*.spec
+
+# Local build helpers
+_runtime/
+build_venv/
+build_libs/
+build_deps/
+
+# Game and runtime data
+game/
+runtime/
+config.json
+accounts.json
+cache/
+portable.txt
+gui-error.log
+selftest*.txt
+
+# Release artifacts
+*.zip
+*.exe
+
+# Local ready-to-run folder
+SimpleCubeLauncher/
+
+# Download/output folders
+downloads/
+update_url.txt
+edge-profile/

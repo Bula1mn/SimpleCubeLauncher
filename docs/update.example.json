@@ -1,0 +1,7 @@
+{
+  "version": "0.2.8",
+  "notes": "SCL 0.2.8：发布准备、update_url.txt、自动更新流水线。",
+  "url": "https://your.site/SimpleCubeLauncher-0.2.6-win64.zip",
+  "sha256": "replace-with-zip-sha256",
+  "mandatory": false
+}

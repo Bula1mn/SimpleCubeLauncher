@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方块启动器 · CubeLauncher</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<svg class="sprite" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 10.8 12 4l8 6.8V20a1 1 0 0 1-1 1h-4.6v-6H9.6v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4"/><path d="M4 17v3h16v-3"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h8"/><circle cx="16" cy="7" r="2.2"/><path d="M18 7h2"/><path d="M20 17h-8"/><circle cx="8" cy="17" r="2.2"/><path d="M6 17H4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6L19 12z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.6"/><path d="M20 5v6h-6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3 1.7 4.8L18.5 9.5l-4.8 1.7L12 16l-1.7-4.8L5.5 9.5l4.8-1.7z"/><path d="M18 16.5 19 19l2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" opacity=".65"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="m21 8-9-5-9 5 9 5 9-5v9l-9 5-9-5V8"/><path d="M12 13v9"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></symbol>
+  <symbol id="i-java" viewBox="0 0 24 24"><path d="M6 3c3 2-3 3.5-3 6 0 2 2 3 4 3"/><path d="M10 3c3 2-2 3.5-2 6 0 2 1.5 3 3.5 3"/><path d="M4 14h13a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M18 16c2 0 3-1 3-2.5S20 11 19 11"/></symbol>
+  <symbol id="i-cube" viewBox="0 0 24 24"><path d="M12 2.8 21 7.4v9.2L12 21.2 3 16.6V7.4z"/><path d="M3 7.4 12 12l9-4.6M12 12v9.2"/></symbol>
+</svg>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">C</div>
+      <div class="brand-text"><strong>方块启动器</strong><span>CubeLauncher</span></div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-page="home"><svg class="ic"><use href="#i-home"/></svg><span>主页</span></button>
+      <button class="nav-item" data-page="download"><svg class="ic"><use href="#i-download"/></svg><span>下载</span></button>
+      <button class="nav-item" data-page="settings"><svg class="ic"><use href="#i-settings"/></svg><span>设置</span></button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="side-status"><span class="dot" id="side-dot"></span><span id="side-status-text">就绪</span></div>
+      <button class="nav-item small" data-action="shutdown"><svg class="ic"><use href="#i-exit"/></svg><span>退出启动器</span></button>
+      <div class="side-version" id="side-version">v0.1.0</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">主页</h1>
+        <p id="page-subtitle">选择一个实例，开始你的世界</p>
+      </div>
+      <div class="topbar-right">
+        <span class="pill" id="pill-java">检测 Java…</span>
+        <span class="pill" id="pill-disk">磁盘 —</span>
+        <button class="btn ghost small" data-action="refresh"><svg class="ic"><use href="#i-refresh"/></svg>刷新</button>
+      </div>
+    </header>
+
+    <div class="pages">
+      <section id="page-home" class="page">
+        <div id="running-panel"></div>
+        <div class="section-head">
+          <div><h2>我的实例</h2><p class="muted" id="instance-count">—</p></div>
+          <button class="btn primary" data-action="new-instance">＋ 新建实例</button>
+        </div>
+        <div id="instance-grid" class="instance-grid"></div>
+        <div class="tips-card">
+          <div class="tips-icon"><svg class="ic"><use href="#i-cube"/></svg></div>
+          <div><strong>每个实例都是独立的小世界</strong><p>Mod、光影、存档与设置分别保存在实例目录中，互不干扰。首次启动会生成存档和日志。</p></div>
+        </div>
+      </section>
+
+      <section id="page-download" class="page hidden">
+        <div class="tabs" id="download-tabs">
+          <button class="tab active" data-tab="versions">游戏版本</button>
+          <button class="tab" data-tab="mod">Mod</button>
+          <button class="tab" data-tab="shader">光影</button>
+          <button class="tab" data-tab="modpack">整合包</button>
+        </div>
+
+        <div id="tab-versions" class="tab-panel">
+          <div class="toolbar">
+            <div class="segmented" id="version-type">
+              <button class="seg active" data-type="release">正式版</button>
+              <button class="seg" data-type="snapshot">快照</button>
+            </div>
+            <input class="input search" id="version-search" placeholder="筛选版本号…">
+            <button class="btn ghost" data-action="reload-versions"><svg class="ic"><use href="#i-refresh"/></svg>刷新清单</button>
+          </div>
+          <div id="version-list" class="version-list"></div>
+          <div class="center"><button class="btn ghost hidden" id="version-more" data-action="version-more">加载更多</button></div>
+        </div>
+
+        <div id="tab-content" class="tab-panel hidden">
+          <div class="toolbar wrap">
+            <div class="search-wrap grow">
+              <svg class="ic search-ic"><use href="#i-search"/></svg>
+              <input class="input search-input" id="content-search" placeholder="搜索 Mod、光影或整合包…">
+            </div>
+            <select class="input select" id="search-game-version" title="游戏版本"></select>
+            <select class="input select" id="search-loader" title="加载器">
+              <option value="fabric">Fabric</option>
+              <option value="forge">Forge</option>
+              <option value="neoforge">NeoForge</option>
+              <option value="all">全部加载器</option>
+            </select>
+          </div>
+          <div id="search-meta" class="search-meta muted small"></div>
+          <div id="search-results" class="result-grid"></div>
+          <div class="center"><button class="btn ghost hidden" id="search-more" data-action="search-more">加载更多</button></div>
+        </div>
+      </section>
+
+      <section id="page-settings" class="page hidden">
+        <div class="settings-grid">
+          <section class="card">
+            <h3>游戏目录</h3>
+            <p class="muted small">所有版本、实例与资源都保存在这里。</p>
+            <div class="field-row">
+              <input class="input grow" id="set-game-root">
+              <button class="btn ghost" data-action="open-game-root"><svg class="ic"><use href="#i-folder"/></svg>打开</button>
+            </div>
+          </section>
+          <section class="card">
+            <h3>Java 运行时</h3>
+            <p class="muted small">启动器会自动探测已安装的 Java，也可以手动指定。</p>
+            <select class="input" id="set-java-select"></select>
+            <input class="input" id="set-java-custom" placeholder="或填写 java.exe 的完整路径">
+          </section>
+          <section class="card">
+            <h3>内存分配</h3>
+            <p class="muted small">大型整合包建议 6144 – 8192 MB。</p>
+            <div class="range-row">
+              <input type="range" id="set-memory" min="1024" max="16384" step="512">
+              <output id="set-memory-out">4096 MB</output>
+            </div>
+          </section>
+          <section class="card">
+            <h3>下载源</h3>
+            <p class="muted small">自动模式优先使用 BMCLAPI 镜像，失败时回退官方源。</p>
+            <div class="segmented" id="set-source">
+              <button class="seg" data-source="auto">自动</button>
+              <button class="seg" data-source="mirror">镜像</button>
+              <button class="seg" data-source="official">官方</button>
+            </div>
+          </section>
+          <section class="card">
+            <h3>玩家</h3>
+            <p class="muted small">离线模式使用的玩家名。</p>
+            <input class="input" id="set-player" maxlength="16" placeholder="Steve">
+          </section>
+          <section class="card">
+            <h3>游戏窗口</h3>
+            <p class="muted small">启动时的默认分辨率。</p>
+            <div class="two">
+              <input class="input" id="set-width" type="number" min="320" max="7680">
+              <span class="muted">×</span>
+              <input class="input" id="set-height" type="number" min="240" max="4320">
+            </div>
+          </section>
+        </div>
+        <div class="settings-actions">
+          <button class="btn primary" data-action="save-settings">保存设置</button>
+          <span id="settings-hint" class="muted small"></span>
+        </div>
+        <section class="about-card">
+          <div><strong>方块启动器 CubeLauncher 0.1</strong><span class="muted">本地离线启动器原型 · 使用 Modrinth 与 Mojang 官方接口</span></div>
+          <div class="muted small">离线账号不连接认证服务器；如需正版登录，可在此基础上接入 Microsoft OAuth。</div>
+        </section>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div id="modal-root" class="modal-root hidden"></div>
+<div id="task-dock" class="task-dock"></div>
+<div id="toast-root" class="toast-root"></div>
+<script src="/app.js"></script>
+</body>
+</html>

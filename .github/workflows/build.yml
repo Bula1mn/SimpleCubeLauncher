@@ -1,0 +1,95 @@
+name: Build Windows release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt -r requirements-build.txt
+
+      - name: Build
+        run: >
+          python -m PyInstaller --noconfirm --clean --onedir --windowed
+          --name SimpleCubeLauncher
+          --icon assets/icon.ico
+          --add-data "assets;assets"
+          --version-file version_info.txt
+          gui.py
+
+      - name: Package release files
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ($env:GITHUB_REF -like "refs/tags/*") {
+            $version = $tag.TrimStart("v")
+          } else {
+            $version = "dev"
+          }
+          $zipName = "SimpleCubeLauncher-$version-win64.zip"
+
+          # update_url.txt lets a distributed build find the latest release
+          # without every player editing settings.
+          $manifestUrl = "https://github.com/${{ github.repository }}/releases/latest/download/update.json"
+          [System.IO.File]::WriteAllText(
+            (Join-Path "dist/SimpleCubeLauncher" "update_url.txt"),
+            $manifestUrl,
+            (New-Object System.Text.UTF8Encoding($false))
+          )
+
+          Compress-Archive -Path "dist/SimpleCubeLauncher" -DestinationPath $zipName -Force
+
+          $sha = (Get-FileHash $zipName -Algorithm SHA256).Hash.ToLower()
+          "$sha  $zipName" | Out-File -FilePath "SHA256SUMS.txt" -Encoding ascii
+
+          $update = [ordered]@{
+            version  = $version
+            notes    = "SCL $version。详情见 GitHub Release。"
+            url      = "https://github.com/${{ github.repository }}/releases/download/$tag/$zipName"
+            sha256   = $sha
+            mandatory = $false
+          }
+          $json = $update | ConvertTo-Json
+          [System.IO.File]::WriteAllText(
+            (Join-Path $PWD "update.json"),
+            $json,
+            (New-Object System.Text.UTF8Encoding($false))
+          )
+
+          "RELEASE_ZIP=$zipName" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding ascii
+          "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding ascii
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimpleCubeLauncher-windows
+          path: |
+            SimpleCubeLauncher-*.zip
+            SHA256SUMS.txt
+            update.json
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            SimpleCubeLauncher-*.zip
+            SHA256SUMS.txt
+            update.json
+          generate_release_notes: true
